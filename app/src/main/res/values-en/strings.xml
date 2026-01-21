@@ -5,6 +5,7 @@
     <string name="charging">Charging</string>
     <string name="chargingSince">Charging Since</string>
     <string name="chargeLevel">Charge Level</string>
+    <string name="chargeLevelVoltage">Charge Level (V)</string>
     <string name="current">Current</string>
     <string name="energy">Energy</string>
     <string name="fullyCharged">fully charged</string>
@@ -26,4 +27,15 @@
     <string name="invertCurrentDesc">When not plugged in, enable this toggle if \u0022Charging\u0022 says \u0022yes\u0022.</string>
     <string name="workarounds">Workarounds</string>
     <string name="workaroundsDesc">Many phones do not correctly implement the Android BatteryManager interface, and will report incorrect battery metrics by default. If needed, use the following settings to workaround implementation defects on your phone.</string>
+    <string name="voltageCurveTitle">Voltage Percentage Curve</string>
+    <string name="voltageCurveDesc">Set 10 voltage/percentage pairs for calculating %V in the status bar.</string>
+    <string name="voltageCurvePercent">Percent (%)</string>
+    <string name="voltageCurveVolts">Voltage (V)</string>
+    <string name="importVoltageCurve">Import</string>
+    <string name="exportVoltageCurve">Export</string>
+    <string name="invalidNumber">Enter a valid number.</string>
+    <string name="voltageCurveImportError">Could not import voltage curve.</string>
+    <string name="voltageCurveImportSizeError">Voltage curve must contain 10 pairs.</string>
+    <string name="voltageCurveExportError">Fix invalid values before exporting.</string>
+    <string name="voltageCurveExported">Voltage curve exported.</string>
 </resources>

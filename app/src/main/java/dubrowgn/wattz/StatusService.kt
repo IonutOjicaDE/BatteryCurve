@@ -23,6 +23,7 @@ class StatusService : Service() {
     private var pluggedInAt: ZonedDateTime? = null
     private lateinit var snapshot: BatterySnapshot
     private val task = PeriodicTask({ update() }, intervalMs)
+    private var voltageCurve: List<VoltagePoint> = VoltageCurve.defaultPoints
 
     private fun debug(msg: String) {
         Log.d(this::class.java.name, msg)
@@ -55,6 +56,7 @@ class StatusService : Service() {
         battery.currentScalar = settings.getFloat("currentScalar", 1f).toDouble()
         battery.invertCurrent = settings.getBoolean("invertCurrent", false)
         indicatorUnits = settings.getString("indicatorUnits", null);
+        voltageCurve = VoltageCurve.loadFromPrefs(settings)
     }
 
     private fun init() {
@@ -205,6 +207,7 @@ class StatusService : Service() {
             "V" -> getString(R.string.voltage)
             "Wh" -> getString(R.string.energy)
             "%" -> getString(R.string.chargeLevel)
+            "%V" -> getString(R.string.chargeLevelVoltage)
             else -> getString(R.string.power)
         }
         val txtValue = fmt( when (indicatorUnits) {
@@ -214,10 +217,12 @@ class StatusService : Service() {
             "V" -> snapshot.volts
             "Wh" -> snapshot.energyWattHours
             "%" -> snapshot.levelPercent
+            "%V" -> VoltageCurve.percentForVoltage(snapshot.volts, voltageCurve)
             else -> snapshot.watts
         })
         val txtUnits = when (indicatorUnits) {
             "C" -> "°C"
+            "%V" -> "%V"
             else -> indicatorUnits ?: "W"
         }
 
