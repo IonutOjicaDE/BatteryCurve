@@ -5,6 +5,7 @@
     <string name="charging">Cargando</string>
     <string name="chargingSince">Cargando desde</string>
     <string name="chargeLevel">Nivel de carga</string>
+    <string name="chargeLevelVoltage">Nivel de carga (V)</string>
     <string name="current">Corriente</string>
     <string name="energy">Energía</string>
     <string name="fullyCharged">Completamente cargado</string>
@@ -26,4 +27,15 @@
     <string name="invertCurrentDesc">Cuando no esté enchufado, activar si \u0022Cargando\u0022 dice \u0022Sí\u0022.</string>
     <string name="workarounds">Soluciones alternativas</string>
     <string name="workaroundsDesc">Muchos teléfonos no implementan correctamente la interfaz de \u0022Android BatteryManager\u0022 y reportarán métricas de batería incorrectas de forma predeterminada. Si es necesario, use la siguiente configuración para solucionar los defectos de implementación en el teléfono.</string>
+    <string name="voltageCurveTitle">Curva de porcentaje por voltaje</string>
+    <string name="voltageCurveDesc">Configure 10 pares de voltaje y porcentaje para calcular %V en la barra de estado.</string>
+    <string name="voltageCurvePercent">Porcentaje (%)</string>
+    <string name="voltageCurveVolts">Voltaje (V)</string>
+    <string name="importVoltageCurve">Importar</string>
+    <string name="exportVoltageCurve">Exportar</string>
+    <string name="invalidNumber">Introduce un número válido.</string>
+    <string name="voltageCurveImportError">No se pudo importar la curva de voltaje.</string>
+    <string name="voltageCurveImportSizeError">La curva debe contener 10 pares.</string>
+    <string name="voltageCurveExportError">Corrige los valores inválidos antes de exportar.</string>
+    <string name="voltageCurveExported">Curva de voltaje exportada.</string>
 </resources>

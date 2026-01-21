@@ -146,10 +146,280 @@
                 android:layout_marginVertical="@dimen/text_size_over_2"
                 android:text="%"
                 app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toLeftOf="@+id/indicatorW"
+                app:layout_constraintRight_toLeftOf="@+id/indicatorPercV"
+                app:layout_constraintTop_toBottomOf="@+id/indicatorV" />
+
+            <RadioButton
+                android:id="@+id/indicatorPercV"
+                android:layout_width="0dp"
+                android:layout_height="21sp"
+                android:layout_marginHorizontal="@dimen/text_size_over_2"
+                android:layout_marginVertical="@dimen/text_size_over_2"
+                android:text="%V"
+                app:layout_constraintLeft_toRightOf="@+id/indicatorPerc"
+                app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/indicatorV" />
 
         </dubrowgn.wattz.RadioLayout>
+
+        <TextView
+            android:id="@+id/lblVoltageCurve"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/text_size"
+            android:text="@string/voltageCurveTitle"
+            android:textColor="@color/primary"
+            android:textSize="@dimen/h2_size"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/indicatorUnits" />
+
+        <TextView
+            android:id="@+id/voltageCurveDesc"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/text_size"
+            android:text="@string/voltageCurveDesc"
+            android:textStyle="italic"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/lblVoltageCurve" />
+
+        <LinearLayout
+            android:id="@+id/voltageCurveButtons"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/text_size"
+            android:layout_marginVertical="@dimen/text_size_over_2"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/voltageCurveDesc">
+
+            <Button
+                android:id="@+id/importVoltageCurve"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/importVoltageCurve" />
+
+            <Button
+                android:id="@+id/exportVoltageCurve"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/text_size_over_2"
+                android:layout_weight="1"
+                android:text="@string/exportVoltageCurve" />
+        </LinearLayout>
+
+        <TableLayout
+            android:id="@+id/voltageCurveTable"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/text_size"
+            android:layout_marginVertical="@dimen/text_size_over_2"
+            android:stretchColumns="1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/voltageCurveButtons">
+
+            <TableRow>
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/voltageCurvePercent"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/voltageCurveVolts"
+                    android:textStyle="bold" />
+            </TableRow>
+
+            <TableRow>
+                <EditText
+                    android:id="@+id/curvePercent0"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:inputType="numberDecimal"
+                    android:maxLines="1" />
+
+                <EditText
+                    android:id="@+id/curveVolt0"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:inputType="numberDecimal"
+                    android:maxLines="1" />
+            </TableRow>
+
+            <TableRow>
+                <EditText
+                    android:id="@+id/curvePercent1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:inputType="numberDecimal"
+                    android:maxLines="1" />
+
+                <EditText
+                    android:id="@+id/curveVolt1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:inputType="numberDecimal"
+                    android:maxLines="1" />
+            </TableRow>
+
+            <TableRow>
+                <EditText
+                    android:id="@+id/curvePercent2"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:inputType="numberDecimal"
+                    android:maxLines="1" />
+
+                <EditText
+                    android:id="@+id/curveVolt2"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:inputType="numberDecimal"
+                    android:maxLines="1" />
+            </TableRow>
+
+            <TableRow>
+                <EditText
+                    android:id="@+id/curvePercent3"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:inputType="numberDecimal"
+                    android:maxLines="1" />
+
+                <EditText
+                    android:id="@+id/curveVolt3"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:inputType="numberDecimal"
+                    android:maxLines="1" />
+            </TableRow>
+
+            <TableRow>
+                <EditText
+                    android:id="@+id/curvePercent4"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:inputType="numberDecimal"
+                    android:maxLines="1" />
+
+                <EditText
+                    android:id="@+id/curveVolt4"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:inputType="numberDecimal"
+                    android:maxLines="1" />
+            </TableRow>
+
+            <TableRow>
+                <EditText
+                    android:id="@+id/curvePercent5"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:inputType="numberDecimal"
+                    android:maxLines="1" />
+
+                <EditText
+                    android:id="@+id/curveVolt5"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:inputType="numberDecimal"
+                    android:maxLines="1" />
+            </TableRow>
+
+            <TableRow>
+                <EditText
+                    android:id="@+id/curvePercent6"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:inputType="numberDecimal"
+                    android:maxLines="1" />
+
+                <EditText
+                    android:id="@+id/curveVolt6"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:inputType="numberDecimal"
+                    android:maxLines="1" />
+            </TableRow>
+
+            <TableRow>
+                <EditText
+                    android:id="@+id/curvePercent7"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:inputType="numberDecimal"
+                    android:maxLines="1" />
+
+                <EditText
+                    android:id="@+id/curveVolt7"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:inputType="numberDecimal"
+                    android:maxLines="1" />
+            </TableRow>
+
+            <TableRow>
+                <EditText
+                    android:id="@+id/curvePercent8"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:inputType="numberDecimal"
+                    android:maxLines="1" />
+
+                <EditText
+                    android:id="@+id/curveVolt8"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:inputType="numberDecimal"
+                    android:maxLines="1" />
+            </TableRow>
+
+            <TableRow>
+                <EditText
+                    android:id="@+id/curvePercent9"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:inputType="numberDecimal"
+                    android:maxLines="1" />
+
+                <EditText
+                    android:id="@+id/curveVolt9"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:inputType="numberDecimal"
+                    android:maxLines="1" />
+            </TableRow>
+        </TableLayout>
 
         <TextView
             android:id="@+id/lblWorkarounds"
@@ -162,7 +432,7 @@
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/indicatorUnits" />
+            app:layout_constraintTop_toBottomOf="@id/voltageCurveTable" />
 
         <TextView
             android:id="@+id/workaroundsDesc"
