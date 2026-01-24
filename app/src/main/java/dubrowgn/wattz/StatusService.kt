@@ -12,6 +12,9 @@ import android.util.Log
 import java.time.LocalDateTime
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
+import kotlin.math.abs
+import kotlin.math.max
+import kotlin.math.min
 
 
 class StatusService : Service() {
@@ -24,6 +27,20 @@ class StatusService : Service() {
     private lateinit var snapshot: BatterySnapshot
     private val task = PeriodicTask({ update() }, intervalMs)
     private var voltageCurve: List<VoltagePoint> = VoltageCurve.defaultPoints
+    private val dtSeconds = intervalMs / 1000.0
+
+    private val capacitymAh = 5000.0
+    private val restThresholdmA = 80.0
+    private val restStableSeconds = 60.0
+    private val pullToOcvK = 0.02
+    private val rateLimitUpPerMin = 1.0
+    private val rateLimitDownPerMin = 1.0
+    private val monotonicThresholdmA = 50.0
+
+    private var socPercent: Double? = null
+    private var restAccumSeconds = 0.0
+    private var cellsCount = 1
+    private var cellsCountDetermined = false
 
     private fun debug(msg: String) {
         Log.d(this::class.java.name, msg)
@@ -62,6 +79,7 @@ class StatusService : Service() {
     private fun init() {
         battery = Battery(applicationContext)
         snapshot = battery.snapshot()
+        determineCellsCount(snapshot.volts)
 
         noteMgr = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         noteMgr.createNotificationChannel(
@@ -158,6 +176,10 @@ class StatusService : Service() {
         val fullyCharged = getString(R.string.fullyCharged)
         val no = getString(R.string.no)
         val yes = getString(R.string.yes)
+        val voltageCellV = snapshot.volts?.div(cellsCount)
+        val chargeLevel = socPercent
+            ?: snapshot.levelPercent
+            ?: VoltageCurve.percentForVoltage(voltageCellV, voltageCurve)
 
         val intent = Intent()
             .setPackage(packageName)
@@ -168,7 +190,7 @@ class StatusService : Service() {
                     false -> no
                 }
             )
-            .putExtra("chargeLevel", fmt(snapshot.levelPercent) + "%")
+            .putExtra("chargeLevel", fmt(chargeLevel) + "%")
             .putExtra("chargingSince",
                 when (val pluggedInAt = pluggedInAt) {
                     null -> indeterminate
@@ -195,10 +217,71 @@ class StatusService : Service() {
         applicationContext.sendBroadcast(intent)
     }
 
+    private fun determineCellsCount(voltage: Double?) {
+        if (cellsCountDetermined) {
+            return
+        }
+        cellsCount = if (voltage != null && voltage > 5.0) 2 else 1
+        cellsCountDetermined = true
+    }
+
+    private fun clamp(value: Double, minValue: Double, maxValue: Double): Double {
+        return value.coerceIn(minValue, maxValue)
+    }
+
+    private fun sanitize(value: Double, fallback: Double): Double {
+        return if (value.isFinite()) value else fallback
+    }
+
     private fun update() {
         debug("update()")
 
         snapshot = battery.snapshot()
+        determineCellsCount(snapshot.volts)
+
+        val voltageCellV = snapshot.volts?.div(cellsCount)
+        val currentDischargemA = snapshot.milliamps
+        val socBaseline = socPercent
+            ?: snapshot.levelPercent
+            ?: VoltageCurve.percentForVoltage(voltageCellV, voltageCurve)
+            ?: 0.0
+        val socPrev = sanitize(socBaseline, 0.0)
+        socPercent = socPrev
+        val dtHours = dtSeconds / 3600.0
+        val deltaSoc = if (currentDischargemA != null && capacitymAh > 0.0) {
+            (currentDischargemA * dtHours / capacitymAh) * 100.0
+        } else {
+            0.0
+        }
+        val socCc = clamp(socPrev - deltaSoc, 0.0, 100.0)
+
+        if (currentDischargemA != null && abs(currentDischargemA) < restThresholdmA) {
+            restAccumSeconds += dtSeconds
+        } else {
+            restAccumSeconds = 0.0
+        }
+        val isRest = restAccumSeconds >= restStableSeconds
+        val socCandidate = if (isRest) {
+            val socV = VoltageCurve.percentForVoltage(voltageCellV, voltageCurve)
+            if (socV != null && socV.isFinite()) {
+                socCc + pullToOcvK * (socV - socCc)
+            } else {
+                socCc
+            }
+        } else {
+            socCc
+        }
+        val maxStepUp = rateLimitUpPerMin * (dtSeconds / 60.0)
+        val maxStepDown = rateLimitDownPerMin * (dtSeconds / 60.0)
+        var socLimited = clamp(socCandidate, socPrev - maxStepDown, socPrev + maxStepUp)
+        if (!isRest && currentDischargemA != null && abs(currentDischargemA) > monotonicThresholdmA) {
+            socLimited = when {
+                currentDischargemA > 0.0 -> min(socLimited, socPrev)
+                currentDischargemA < 0.0 -> max(socLimited, socPrev)
+                else -> socLimited
+            }
+        }
+        socPercent = clamp(sanitize(socLimited, socPrev), 0.0, 100.0)
 
         val txtLabel = when (indicatorUnits) {
             "A" -> getString(R.string.current)
@@ -216,8 +299,8 @@ class StatusService : Service() {
             "C" -> snapshot.celsius
             "V" -> snapshot.volts
             "Wh" -> snapshot.energyWattHours
-            "%" -> snapshot.levelPercent
-            "%V" -> VoltageCurve.percentForVoltage(snapshot.volts, voltageCurve)
+            "%" -> socPercent
+            "%V" -> VoltageCurve.percentForVoltage(voltageCellV, voltageCurve)
             else -> snapshot.watts
         })
         val txtUnits = when (indicatorUnits) {

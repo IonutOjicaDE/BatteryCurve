@@ -24,12 +24,16 @@ class BatterySnapshot(
         return v?.div(1_000.0)
     }
 
-    val microamps : Double? get() {
-        val sign = if (invertCurrent) 1.0 else -1.0
-        return currentRaw?.times(currentScalar)?.times(sign)
+    private fun normalizeCurrent(currentNowmA: Double?, chargingWorkaroundSwitch: Boolean): Double? {
+        val current = currentNowmA ?: return null
+        return if (chargingWorkaroundSwitch) current else -current
     }
-    val milliamps : Double? get() = microamps?.div(1_000.0)
-    val amps : Double? get() = fromMicros(microamps)
+
+    private val milliampsRaw : Double? get() = currentRaw?.times(currentScalar)?.div(1_000.0)
+
+    val milliamps : Double? get() = normalizeCurrent(milliampsRaw, invertCurrent)
+    val microamps : Double? get() = milliamps?.times(1_000.0)
+    val amps : Double? get() = milliamps?.div(1_000.0)
 
     val millivolts : Double? get() = voltsRaw?.toDouble()
     val volts : Double? get() = fromMillis(millivolts)
