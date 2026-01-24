@@ -6,10 +6,11 @@ fun fmt(v: Double?): String {
     if (v == null)
         return "- "
 
-    if (v.absoluteValue >= 10.0)
-        return "%.0f".format(v)
-
-    return "%.1f".format(v)
+    return when {
+        v.absoluteValue < 10.0 -> "%.2f".format(v)
+        v.absoluteValue < 100.0 -> "%.1f".format(v)
+        else -> "%.0f".format(v)
+    }
 }
 
 fun fmtSeconds(seconds: Double?): String {
