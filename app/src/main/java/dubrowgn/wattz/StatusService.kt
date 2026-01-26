@@ -21,6 +21,7 @@ class StatusService : Service() {
     private lateinit var battery: Battery
     private val dateFmt = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
     private var indicatorUnits: String? = null
+    private var indicatorDigits = defaultIndicatorDigits
     private lateinit var noteBuilder: Notification.Builder
     private lateinit var noteMgr: NotificationManager
     private var pluggedInAt: ZonedDateTime? = null
@@ -72,7 +73,9 @@ class StatusService : Service() {
         val settings = getSharedPreferences(settingsName, MODE_MULTI_PROCESS)
         battery.currentScalar = settings.getFloat("currentScalar", 1f).toDouble()
         battery.invertCurrent = settings.getBoolean("invertCurrent", false)
-        indicatorUnits = settings.getString("indicatorUnits", null);
+        indicatorUnits = settings.getString("indicatorUnits", null)
+        indicatorDigits = settings.getInt("indicatorDigits", defaultIndicatorDigits)
+            .coerceIn(1, 9)
         voltageCurve = VoltageCurve.loadFromPrefs(settings)
     }
 
@@ -102,9 +105,10 @@ class StatusService : Service() {
         )
 
         val ind = getString(R.string.indeterminate)
+        val indicatorText = splitFixedDigits(null, indicatorDigits, ind)
         noteBuilder = Notification.Builder(this, noteChannelId)
             .setContentTitle("Battery Draw: $ind W")
-            .setSmallIcon(renderIcon(ind, "W"))
+            .setSmallIcon(renderIcon(indicatorText.first, indicatorText.second))
             .setContentIntent(noteIntent)
             .setOnlyAlertOnce(true)
 
@@ -150,7 +154,7 @@ class StatusService : Service() {
         return null
     }
 
-    private fun renderIcon(value: String, unit: String): Icon {
+    private fun renderIcon(topLine: String, bottomLine: String): Icon {
         val density = resources.displayMetrics.density
         val w = (48f * density).toInt()
         val bitmap = Bitmap.createBitmap(w, w, Bitmap.Config.ALPHA_8)
@@ -164,8 +168,8 @@ class StatusService : Service() {
         paint.color = Color.WHITE
         paint.textAlign = Paint.Align.CENTER
 
-        canvas.drawText(value, w / 2f, w / 2f, paint)
-        canvas.drawText(unit, w / 2f, w.toFloat(), paint)
+        canvas.drawText(topLine, w / 2f, w * 0.55f, paint)
+        canvas.drawText(bottomLine, w / 2f, w * 0.95f, paint)
 
         return Icon.createWithBitmap(bitmap)
     }
@@ -173,6 +177,7 @@ class StatusService : Service() {
     private fun updateData() {
         val plugType = snapshot.plugType?.name?.lowercase()
         val indeterminate = getString(R.string.indeterminate)
+        val digits = indicatorDigits
         val fullyCharged = getString(R.string.fullyCharged)
         val no = getString(R.string.no)
         val yes = getString(R.string.yes)
@@ -190,7 +195,7 @@ class StatusService : Service() {
                     false -> no
                 }
             )
-            .putExtra("chargeLevel", fmt(chargeLevel) + "%")
+            .putExtra("chargeLevel", fmtFixedDigits(chargeLevel, digits, indeterminate) + "%")
             .putExtra("chargingSince",
                 when (val pluggedInAt = pluggedInAt) {
                     null -> indeterminate
@@ -199,12 +204,13 @@ class StatusService : Service() {
                         .format(dateFmt)
                 }
             )
-            .putExtra("current", fmt(snapshot.amps) + "A")
+            .putExtra("current", fmtFixedDigits(snapshot.amps, digits, indeterminate) + "A")
             .putExtra("energy",
-                "${fmt(snapshot.energyWattHours)}Wh (${fmt(snapshot.energyAmpHours)}Ah)"
+                "${fmtFixedDigits(snapshot.energyWattHours, digits, indeterminate)}Wh (" +
+                    "${fmtFixedDigits(snapshot.energyAmpHours, digits, indeterminate)}Ah)"
             )
-            .putExtra("power", fmt(snapshot.watts) + "W")
-            .putExtra("temperature", fmt(snapshot.celsius) + "°C")
+            .putExtra("power", fmtFixedDigits(snapshot.watts, digits, indeterminate) + "W")
+            .putExtra("temperature", fmtFixedDigits(snapshot.celsius, digits, indeterminate) + "°C")
             .putExtra("timeToFullCharge",
                 when (val seconds = snapshot.secondsUntilCharged) {
                     null -> indeterminate
@@ -212,7 +218,7 @@ class StatusService : Service() {
                     else -> fmtSeconds(seconds)
                 }
             )
-            .putExtra("voltage", fmt(snapshot.volts) + "V")
+            .putExtra("voltage", fmtFixedDigits(snapshot.volts, digits, indeterminate) + "V")
 
         applicationContext.sendBroadcast(intent)
     }
@@ -293,7 +299,9 @@ class StatusService : Service() {
             "%V" -> getString(R.string.chargeLevelVoltage)
             else -> getString(R.string.power)
         }
-        val txtValue = fmt( when (indicatorUnits) {
+        val digits = indicatorDigits
+        val indeterminate = getString(R.string.indeterminate)
+        val txtValue = fmtFixedDigits( when (indicatorUnits) {
             "A" -> snapshot.amps
             "Ah" -> snapshot.energyAmpHours
             "C" -> snapshot.celsius
@@ -302,16 +310,30 @@ class StatusService : Service() {
             "%" -> socPercent
             "%V" -> VoltageCurve.percentForVoltage(voltageCellV, voltageCurve)
             else -> snapshot.watts
-        })
+        }, digits, indeterminate)
         val txtUnits = when (indicatorUnits) {
             "C" -> "°C"
             "%V" -> "%V"
             else -> indicatorUnits ?: "W"
         }
+        val iconLines = splitFixedDigits(
+            when (indicatorUnits) {
+                "A" -> snapshot.amps
+                "Ah" -> snapshot.energyAmpHours
+                "C" -> snapshot.celsius
+                "V" -> snapshot.volts
+                "Wh" -> snapshot.energyWattHours
+                "%" -> socPercent
+                "%V" -> VoltageCurve.percentForVoltage(voltageCellV, voltageCurve)
+                else -> snapshot.watts
+            },
+            digits,
+            indeterminate,
+        )
 
         noteBuilder
             .setContentTitle("${getString(R.string.battery)} ${txtLabel}: ${txtValue}${txtUnits}")
-            .setSmallIcon(renderIcon(txtValue, txtUnits))
+            .setSmallIcon(renderIcon(iconLines.first, iconLines.second))
 
         noteBuilder.setContentText(
             when(val seconds = snapshot.secondsUntilCharged) {

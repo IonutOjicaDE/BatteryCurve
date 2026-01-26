@@ -163,6 +163,27 @@
         </dubrowgn.wattz.RadioLayout>
 
         <TextView
+            style="@style/Label"
+            android:id="@+id/lblIndicatorDigits"
+            android:text="@string/indicatorDigits"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/indicatorUnits" />
+
+        <EditText
+            android:id="@+id/indicatorDigits"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/text_size"
+            android:layout_marginTop="@dimen/text_size_over_2"
+            android:inputType="number"
+            android:maxLength="1"
+            android:maxLines="1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/lblIndicatorDigits" />
+
+        <TextView
             android:id="@+id/lblVoltageCurve"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -173,7 +194,7 @@
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/indicatorUnits" />
+            app:layout_constraintTop_toBottomOf="@id/indicatorDigits" />
 
         <TextView
             android:id="@+id/voltageCurveDesc"

@@ -27,6 +27,7 @@ class SettingsActivity : Activity() {
     private lateinit var charging: TextView
     private lateinit var currentScalar: RadioGroup
     private lateinit var indicatorUnits: RadioLayout
+    private lateinit var indicatorDigits: EditText
     @SuppressLint("UseSwitchCompatOrMaterialCode")
     private lateinit var invertCurrent: Switch
     private lateinit var power: TextView
@@ -34,6 +35,7 @@ class SettingsActivity : Activity() {
     private lateinit var exportVoltageCurve: Button
     private lateinit var voltageCurveFields: List<VoltageCurveField>
     private var loadingVoltageCurve = false
+    private var indicatorDigitsValue = defaultIndicatorDigits
 
     private fun debug(msg: String) {
         Log.d(this::class.java.name, msg)
@@ -74,6 +76,9 @@ class SettingsActivity : Activity() {
                 else -> R.id.indicatorW
             }
         )
+        indicatorDigitsValue = settings.getInt("indicatorDigits", defaultIndicatorDigits)
+            .coerceIn(1, 9)
+        indicatorDigits.setText(indicatorDigitsValue.toString())
         invertCurrent.isChecked = settings.getBoolean("invertCurrent", false)
         loadingVoltageCurve = true
         setVoltageCurveFields(VoltageCurve.loadFromPrefs(settings))
@@ -108,6 +113,15 @@ class SettingsActivity : Activity() {
             )
             .commit()
 
+        sendBroadcast(Intent().setPackage(packageName).setAction(settingsUpdateInd))
+    }
+
+    @SuppressLint("ApplySharedPref")
+    private fun saveIndicatorDigits(value: Int) {
+        getSharedPreferences(settingsName, MODE_PRIVATE)
+            .edit()
+            .putInt("indicatorDigits", value)
+            .commit()
         sendBroadcast(Intent().setPackage(packageName).setAction(settingsUpdateInd))
     }
 
@@ -203,6 +217,7 @@ class SettingsActivity : Activity() {
         charging = findViewById(R.id.charging)
         currentScalar = findViewById(R.id.currentScalar)
         indicatorUnits = findViewById(R.id.indicatorUnits)
+        indicatorDigits = findViewById(R.id.indicatorDigits)
         invertCurrent = findViewById(R.id.invertCurrent)
         power = findViewById(R.id.power)
         importVoltageCurve = findViewById(R.id.importVoltageCurve)
@@ -226,6 +241,20 @@ class SettingsActivity : Activity() {
         currentScalar.setOnCheckedChangeListener { _, _ -> onChange() }
         indicatorUnits.checkChangedCallback = { _ -> onChange() }
         invertCurrent.setOnCheckedChangeListener { _, _ -> onChange() }
+        indicatorDigits.setOnFocusChangeListener { _, hasFocus ->
+            if (!hasFocus) {
+                val parsed = indicatorDigits.text.toString().trim().toIntOrNull()
+                val valid = parsed?.takeIf { it in 1..9 }
+                if (valid == null) {
+                    indicatorDigits.setText(indicatorDigitsValue.toString())
+                    indicatorDigits.error = getString(R.string.invalidNumber)
+                } else {
+                    indicatorDigitsValue = valid
+                    indicatorDigits.error = null
+                    saveIndicatorDigits(valid)
+                }
+            }
+        }
 
         val watcher = object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) = Unit
