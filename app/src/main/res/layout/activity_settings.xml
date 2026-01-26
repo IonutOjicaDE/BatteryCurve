@@ -184,6 +184,38 @@
             app:layout_constraintTop_toBottomOf="@+id/lblIndicatorDigits" />
 
         <TextView
+            style="@style/Label"
+            android:id="@+id/lblRefreshInterval"
+            android:text="@string/refreshInterval"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/indicatorDigits" />
+
+        <TextView
+            android:id="@+id/refreshIntervalDesc"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/text_size"
+            android:layout_marginVertical="@dimen/text_size_over_2"
+            android:text="@string/refreshIntervalDesc"
+            android:textStyle="italic"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/lblRefreshInterval" />
+
+        <EditText
+            android:id="@+id/refreshInterval"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/text_size"
+            android:layout_marginTop="@dimen/text_size_over_2"
+            android:inputType="number"
+            android:maxLines="1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/refreshIntervalDesc" />
+
+        <TextView
             android:id="@+id/lblVoltageCurve"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -194,7 +226,7 @@
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/indicatorDigits" />
+            app:layout_constraintTop_toBottomOf="@id/refreshInterval" />
 
         <TextView
             android:id="@+id/voltageCurveDesc"

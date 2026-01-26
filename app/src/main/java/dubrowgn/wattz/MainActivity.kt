@@ -16,7 +16,9 @@ import android.widget.TextView
 const val namespace = "dubrowgn.wattz"
 const val batteryDataReq = "$namespace.battery-data-req"
 const val batteryDataResp = "$namespace.battery-data-resp"
-const val intervalMs = 1_250L
+const val defaultRefreshIntervalMs = 1_250L
+const val minRefreshIntervalMs = 100L
+const val maxRefreshIntervalMs = 100_000L
 const val noteChannelId = "$namespace.status"
 const val noteId = 1
 const val defaultIndicatorDigits = 6
