@@ -218,7 +218,7 @@ class StatusService : Service() {
                     else -> fmtSeconds(seconds)
                 }
             )
-            .putExtra("voltage", fmtFixedDigits(snapshot.volts, digits, indeterminate) + "V")
+            .putExtra("voltage", fmtFixedDigits(voltageCellV, digits, indeterminate) + "V")
 
         applicationContext.sendBroadcast(intent)
     }
@@ -305,7 +305,7 @@ class StatusService : Service() {
             "A" -> snapshot.amps
             "Ah" -> snapshot.energyAmpHours
             "C" -> snapshot.celsius
-            "V" -> snapshot.volts
+            "V" -> voltageCellV
             "Wh" -> snapshot.energyWattHours
             "%" -> socPercent
             "%V" -> VoltageCurve.percentForVoltage(voltageCellV, voltageCurve)
@@ -321,7 +321,7 @@ class StatusService : Service() {
                 "A" -> snapshot.amps
                 "Ah" -> snapshot.energyAmpHours
                 "C" -> snapshot.celsius
-                "V" -> snapshot.volts
+                "V" -> voltageCellV
                 "Wh" -> snapshot.energyWattHours
                 "%" -> socPercent
                 "%V" -> VoltageCurve.percentForVoltage(voltageCellV, voltageCurve)
