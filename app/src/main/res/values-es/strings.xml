@@ -19,6 +19,8 @@
     <string name="voltage">Voltaje</string>
     <string name="units">Unidades</string>
     <string name="indicatorDigits">Dígitos del indicador (1-9)</string>
+    <string name="refreshInterval">Refresh interval (ms)</string>
+    <string name="refreshIntervalDesc">How often battery data refreshes. Allowed range: 100-100000 ms.</string>
     <string name="yes">Sí</string>
 
     <!-- settings -->

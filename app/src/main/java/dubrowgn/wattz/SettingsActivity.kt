@@ -20,6 +20,7 @@ import android.widget.Toast
 
 const val settingsName = "settings"
 const val settingsUpdateInd = "$namespace.settings-update-ind"
+const val refreshIntervalKey = "refreshIntervalMs"
 
 class SettingsActivity : Activity() {
     private val batteryReceiver = BatteryDataReceiver()
@@ -28,6 +29,7 @@ class SettingsActivity : Activity() {
     private lateinit var currentScalar: RadioGroup
     private lateinit var indicatorUnits: RadioLayout
     private lateinit var indicatorDigits: EditText
+    private lateinit var refreshInterval: EditText
     @SuppressLint("UseSwitchCompatOrMaterialCode")
     private lateinit var invertCurrent: Switch
     private lateinit var power: TextView
@@ -36,6 +38,7 @@ class SettingsActivity : Activity() {
     private lateinit var voltageCurveFields: List<VoltageCurveField>
     private var loadingVoltageCurve = false
     private var indicatorDigitsValue = defaultIndicatorDigits
+    private var refreshIntervalValue = defaultRefreshIntervalMs
 
     private fun debug(msg: String) {
         Log.d(this::class.java.name, msg)
@@ -79,6 +82,9 @@ class SettingsActivity : Activity() {
         indicatorDigitsValue = settings.getInt("indicatorDigits", defaultIndicatorDigits)
             .coerceIn(1, 9)
         indicatorDigits.setText(indicatorDigitsValue.toString())
+        refreshIntervalValue = settings.getLong(refreshIntervalKey, defaultRefreshIntervalMs)
+            .coerceIn(minRefreshIntervalMs, maxRefreshIntervalMs)
+        refreshInterval.setText(refreshIntervalValue.toString())
         invertCurrent.isChecked = settings.getBoolean("invertCurrent", false)
         loadingVoltageCurve = true
         setVoltageCurveFields(VoltageCurve.loadFromPrefs(settings))
@@ -121,6 +127,15 @@ class SettingsActivity : Activity() {
         getSharedPreferences(settingsName, MODE_PRIVATE)
             .edit()
             .putInt("indicatorDigits", value)
+            .commit()
+        sendBroadcast(Intent().setPackage(packageName).setAction(settingsUpdateInd))
+    }
+
+    @SuppressLint("ApplySharedPref")
+    private fun saveRefreshInterval(value: Long) {
+        getSharedPreferences(settingsName, MODE_PRIVATE)
+            .edit()
+            .putLong(refreshIntervalKey, value)
             .commit()
         sendBroadcast(Intent().setPackage(packageName).setAction(settingsUpdateInd))
     }
@@ -218,6 +233,7 @@ class SettingsActivity : Activity() {
         currentScalar = findViewById(R.id.currentScalar)
         indicatorUnits = findViewById(R.id.indicatorUnits)
         indicatorDigits = findViewById(R.id.indicatorDigits)
+        refreshInterval = findViewById(R.id.refreshInterval)
         invertCurrent = findViewById(R.id.invertCurrent)
         power = findViewById(R.id.power)
         importVoltageCurve = findViewById(R.id.importVoltageCurve)
@@ -252,6 +268,20 @@ class SettingsActivity : Activity() {
                     indicatorDigitsValue = valid
                     indicatorDigits.error = null
                     saveIndicatorDigits(valid)
+                }
+            }
+        }
+        refreshInterval.setOnFocusChangeListener { _, hasFocus ->
+            if (!hasFocus) {
+                val parsed = refreshInterval.text.toString().trim().toLongOrNull()
+                val valid = parsed?.coerceIn(minRefreshIntervalMs, maxRefreshIntervalMs)
+                if (valid == null || parsed != valid) {
+                    refreshInterval.setText(refreshIntervalValue.toString())
+                    refreshInterval.error = getString(R.string.invalidNumber)
+                } else {
+                    refreshIntervalValue = valid
+                    refreshInterval.error = null
+                    saveRefreshInterval(valid)
                 }
             }
         }

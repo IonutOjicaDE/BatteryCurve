@@ -26,9 +26,10 @@ class StatusService : Service() {
     private lateinit var noteMgr: NotificationManager
     private var pluggedInAt: ZonedDateTime? = null
     private lateinit var snapshot: BatterySnapshot
-    private val task = PeriodicTask({ update() }, intervalMs)
+    private val task = PeriodicTask({ update() }, defaultRefreshIntervalMs)
     private var voltageCurve: List<VoltagePoint> = VoltageCurve.defaultPoints
-    private val dtSeconds = intervalMs / 1000.0
+    private var refreshIntervalMs = defaultRefreshIntervalMs
+    private var dtSeconds = refreshIntervalMs / 1000.0
 
     private val capacitymAh = 5000.0
     private val restThresholdmA = 80.0
@@ -53,7 +54,7 @@ class StatusService : Service() {
                 batteryDataReq -> updateData()
                 settingsUpdateInd -> {
                     loadSettings()
-                    update()
+                    task.start()
                 }
                 Intent.ACTION_POWER_CONNECTED -> {
                     pluggedInAt = ZonedDateTime.now()
@@ -76,6 +77,10 @@ class StatusService : Service() {
         indicatorUnits = settings.getString("indicatorUnits", null)
         indicatorDigits = settings.getInt("indicatorDigits", defaultIndicatorDigits)
             .coerceIn(1, 9)
+        refreshIntervalMs = settings.getLong(refreshIntervalKey, defaultRefreshIntervalMs)
+            .coerceIn(minRefreshIntervalMs, maxRefreshIntervalMs)
+        task.updateInterval(refreshIntervalMs)
+        dtSeconds = refreshIntervalMs / 1000.0
         voltageCurve = VoltageCurve.loadFromPrefs(settings)
     }
 
