@@ -18,6 +18,7 @@
     <string name="timeToFullCharge">Tiempo hasta completar la carga</string>
     <string name="voltage">Voltaje</string>
     <string name="units">Unidades</string>
+    <string name="indicatorDigits">Dígitos del indicador (1-9)</string>
     <string name="yes">Sí</string>
 
     <!-- settings -->

@@ -19,6 +19,7 @@ const val batteryDataResp = "$namespace.battery-data-resp"
 const val intervalMs = 1_250L
 const val noteChannelId = "$namespace.status"
 const val noteId = 1
+const val defaultIndicatorDigits = 6
 
 class MainActivity : Activity() {
     private val batteryReceiver = BatteryDataReceiver()

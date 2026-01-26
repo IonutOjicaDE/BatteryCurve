@@ -1,16 +1,58 @@
 package dubrowgn.wattz
 
-import kotlin.math.absoluteValue
+import java.util.Locale
+import kotlin.math.abs
 
-fun fmt(v: Double?): String {
-    if (v == null)
-        return "- "
-
-    return when {
-        v.absoluteValue < 10.0 -> "%.2f".format(v)
-        v.absoluteValue < 100.0 -> "%.1f".format(v)
-        else -> "%.0f".format(v)
+fun fmtFixedDigits(v: Double?, digits: Int, indeterminate: String = "-"): String {
+    if (v == null || !v.isFinite()) {
+        return indeterminate
     }
+
+    val clampedDigits = digits.coerceIn(1, 9)
+    val absValue = abs(v)
+    val integerDigits = if (absValue < 1.0) 0 else absValue.toLong().toString().length
+    val decimalPlaces = (clampedDigits - integerDigits).coerceAtLeast(0)
+    val formatted = String.format(Locale.US, "%.${decimalPlaces}f", absValue)
+
+    return if (integerDigits == 0 && formatted.startsWith("0.")) {
+        formatted.drop(1)
+    } else {
+        formatted
+    }
+}
+
+fun splitFixedDigits(v: Double?, digits: Int, indeterminate: String = "-"): Pair<String, String> {
+    val formatted = fmtFixedDigits(v, digits, indeterminate)
+    if (formatted == indeterminate) {
+        return Pair(formatted, "")
+    }
+
+    val splitDigits = digits.coerceIn(1, 9) / 2
+    var digitIndex = 0
+    val top = StringBuilder()
+    val bottom = StringBuilder()
+
+    for (char in formatted) {
+        when {
+            char.isDigit() -> {
+                if (digitIndex < splitDigits) {
+                    top.append(char)
+                } else {
+                    bottom.append(char)
+                }
+                digitIndex++
+            }
+            char == '.' -> {
+                if (digitIndex < splitDigits) {
+                    top.append(char)
+                } else {
+                    bottom.append(char)
+                }
+            }
+        }
+    }
+
+    return Pair(top.toString(), bottom.toString())
 }
 
 fun fmtSeconds(seconds: Double?): String {
