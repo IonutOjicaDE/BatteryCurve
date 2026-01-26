@@ -152,8 +152,10 @@ class StatusService : Service() {
 
     private fun renderIcon(value: String, unit: String): Icon {
         val density = resources.displayMetrics.density
-        val w = (48f * density).toInt()
-        val bitmap = Bitmap.createBitmap(w, w, Bitmap.Config.ALPHA_8)
+        val size = (48f * density).toInt()
+        val width = (96f * density).toInt()
+        val height = size
+        val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ALPHA_8)
         val canvas = Canvas(bitmap)
 
         val textSize = 28f * density
@@ -164,8 +166,14 @@ class StatusService : Service() {
         paint.color = Color.WHITE
         paint.textAlign = Paint.Align.CENTER
 
-        canvas.drawText(value, w / 2f, w / 2f, paint)
-        canvas.drawText(unit, w / 2f, w.toFloat(), paint)
+        val metrics = paint.fontMetrics
+        val lineHeight = metrics.descent - metrics.ascent
+        val totalHeight = lineHeight * 2
+        val startY = (height - totalHeight) / 2f - metrics.ascent
+        val centerX = width / 2f
+
+        canvas.drawText(value, centerX, startY, paint)
+        canvas.drawText(unit, centerX, startY + lineHeight, paint)
 
         return Icon.createWithBitmap(bitmap)
     }
