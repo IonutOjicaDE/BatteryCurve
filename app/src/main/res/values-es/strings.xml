@@ -19,9 +19,24 @@
     <string name="voltage">Voltaje</string>
     <string name="units">Unidades</string>
     <string name="indicatorDigits">Dígitos del indicador (1-9)</string>
-    <string name="refreshInterval">Refresh interval (ms)</string>
-    <string name="refreshIntervalDesc">How often battery data refreshes. Allowed range: 100-100000 ms.</string>
+    <string name="refreshInterval">Intervalo de actualización (ms)</string>
+    <string name="refreshIntervalDesc">Frecuencia de actualización de los datos de batería. Rango permitido: 100-100000 ms.</string>
     <string name="yes">Sí</string>
+    <string name="socSettingsTitle">Estimación de SOC</string>
+    <string name="capacityMah">Capacidad de batería (mAh)</string>
+    <string name="capacityMahDesc">Se usa para el conteo de carga y estimar el % con el tiempo. Ejemplo: 5000 mAh.</string>
+    <string name="restThresholdmA">Umbral de reposo de corriente (mA)</string>
+    <string name="restThresholdmADesc">Por debajo de este valor, la batería se considera en reposo. Ejemplo: 100 mA (0,1 A).</string>
+    <string name="restStableSeconds">Tiempo de reposo estable (segundos)</string>
+    <string name="restStableSecondsDesc">Tiempo que la corriente debe permanecer bajo el umbral antes de usar correcciones OCV. Ejemplo: 10 segundos.</string>
+    <string name="pullToOcvK">Factor de ajuste a OCV</string>
+    <string name="pullToOcvKDesc">Mezcla el SOC hacia el estimado por voltaje durante el reposo. Ejemplo: 0,02 mueve el 2% de la diferencia por actualización.</string>
+    <string name="rateLimitUpPerMin">Máximo aumento de SOC (%/min)</string>
+    <string name="rateLimitUpPerMinDesc">Limita cuán rápido puede subir el SOC por minuto. Ejemplo: 1,0 %/min.</string>
+    <string name="rateLimitDownPerMin">Máxima caída de SOC (%/min)</string>
+    <string name="rateLimitDownPerMinDesc">Limita cuán rápido puede bajar el SOC por minuto. Ejemplo: 1,0 %/min.</string>
+    <string name="monotonicThresholdmA">Umbral de monotonía (mA)</string>
+    <string name="monotonicThresholdmADesc">Por encima de esta corriente, el SOC solo cambia en la dirección de carga/descarga. Ejemplo: 50 mA.</string>
 
     <!-- settings -->
     <string name="currentScalar">Escala de potencia alternativa</string>

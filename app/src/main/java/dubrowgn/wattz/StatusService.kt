@@ -31,13 +31,13 @@ class StatusService : Service() {
     private var refreshIntervalMs = defaultRefreshIntervalMs
     private var dtSeconds = refreshIntervalMs / 1000.0
 
-    private val capacitymAh = 5000.0
-    private val restThresholdmA = 80.0
-    private val restStableSeconds = 60.0
-    private val pullToOcvK = 0.02
-    private val rateLimitUpPerMin = 1.0
-    private val rateLimitDownPerMin = 1.0
-    private val monotonicThresholdmA = 50.0
+    private var capacitymAh = defaultCapacityMah
+    private var restThresholdmA = defaultRestThresholdmA
+    private var restStableSeconds = defaultRestStableSeconds
+    private var pullToOcvK = defaultPullToOcvK
+    private var rateLimitUpPerMin = defaultRateLimitUpPerMin
+    private var rateLimitDownPerMin = defaultRateLimitDownPerMin
+    private var monotonicThresholdmA = defaultMonotonicThresholdmA
 
     private var socPercent: Double? = null
     private var restAccumSeconds = 0.0
@@ -82,6 +82,25 @@ class StatusService : Service() {
         task.updateInterval(refreshIntervalMs)
         dtSeconds = refreshIntervalMs / 1000.0
         voltageCurve = VoltageCurve.loadFromPrefs(settings)
+        capacitymAh = settings.getFloat(capacityMahKey, defaultCapacityMah.toFloat()).toDouble()
+        restThresholdmA = settings.getFloat(restThresholdmAKey, defaultRestThresholdmA.toFloat()).toDouble()
+        restStableSeconds = settings.getFloat(
+            restStableSecondsKey,
+            defaultRestStableSeconds.toFloat()
+        ).toDouble()
+        pullToOcvK = settings.getFloat(pullToOcvKKey, defaultPullToOcvK.toFloat()).toDouble()
+        rateLimitUpPerMin = settings.getFloat(
+            rateLimitUpPerMinKey,
+            defaultRateLimitUpPerMin.toFloat()
+        ).toDouble()
+        rateLimitDownPerMin = settings.getFloat(
+            rateLimitDownPerMinKey,
+            defaultRateLimitDownPerMin.toFloat()
+        ).toDouble()
+        monotonicThresholdmA = settings.getFloat(
+            monotonicThresholdmAKey,
+            defaultMonotonicThresholdmA.toFloat()
+        ).toDouble()
     }
 
     private fun init() {

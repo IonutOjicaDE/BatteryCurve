@@ -216,6 +216,243 @@
             app:layout_constraintTop_toBottomOf="@+id/refreshIntervalDesc" />
 
         <TextView
+            android:id="@+id/lblSocSettings"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/text_size"
+            android:text="@string/socSettingsTitle"
+            android:textColor="@color/primary"
+            android:textSize="@dimen/h2_size"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/refreshInterval" />
+
+        <TextView
+            style="@style/Label"
+            android:id="@+id/lblCapacityMah"
+            android:text="@string/capacityMah"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/lblSocSettings" />
+
+        <TextView
+            android:id="@+id/capacityMahDesc"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/text_size"
+            android:layout_marginVertical="@dimen/text_size_over_2"
+            android:text="@string/capacityMahDesc"
+            android:textStyle="italic"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/lblCapacityMah" />
+
+        <EditText
+            android:id="@+id/capacityMah"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/text_size"
+            android:layout_marginTop="@dimen/text_size_over_2"
+            android:inputType="numberDecimal"
+            android:maxLines="1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/capacityMahDesc" />
+
+        <TextView
+            style="@style/Label"
+            android:id="@+id/lblRestThreshold"
+            android:text="@string/restThresholdmA"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/capacityMah" />
+
+        <TextView
+            android:id="@+id/restThresholdDesc"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/text_size"
+            android:layout_marginVertical="@dimen/text_size_over_2"
+            android:text="@string/restThresholdmADesc"
+            android:textStyle="italic"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/lblRestThreshold" />
+
+        <EditText
+            android:id="@+id/restThresholdmA"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/text_size"
+            android:layout_marginTop="@dimen/text_size_over_2"
+            android:inputType="numberDecimal"
+            android:maxLines="1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/restThresholdDesc" />
+
+        <TextView
+            style="@style/Label"
+            android:id="@+id/lblRestStableSeconds"
+            android:text="@string/restStableSeconds"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/restThresholdmA" />
+
+        <TextView
+            android:id="@+id/restStableSecondsDesc"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/text_size"
+            android:layout_marginVertical="@dimen/text_size_over_2"
+            android:text="@string/restStableSecondsDesc"
+            android:textStyle="italic"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/lblRestStableSeconds" />
+
+        <EditText
+            android:id="@+id/restStableSeconds"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/text_size"
+            android:layout_marginTop="@dimen/text_size_over_2"
+            android:inputType="numberDecimal"
+            android:maxLines="1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/restStableSecondsDesc" />
+
+        <TextView
+            style="@style/Label"
+            android:id="@+id/lblPullToOcvK"
+            android:text="@string/pullToOcvK"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/restStableSeconds" />
+
+        <TextView
+            android:id="@+id/pullToOcvKDesc"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/text_size"
+            android:layout_marginVertical="@dimen/text_size_over_2"
+            android:text="@string/pullToOcvKDesc"
+            android:textStyle="italic"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/lblPullToOcvK" />
+
+        <EditText
+            android:id="@+id/pullToOcvK"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/text_size"
+            android:layout_marginTop="@dimen/text_size_over_2"
+            android:inputType="numberDecimal"
+            android:maxLines="1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/pullToOcvKDesc" />
+
+        <TextView
+            style="@style/Label"
+            android:id="@+id/lblRateLimitUpPerMin"
+            android:text="@string/rateLimitUpPerMin"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/pullToOcvK" />
+
+        <TextView
+            android:id="@+id/rateLimitUpPerMinDesc"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/text_size"
+            android:layout_marginVertical="@dimen/text_size_over_2"
+            android:text="@string/rateLimitUpPerMinDesc"
+            android:textStyle="italic"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/lblRateLimitUpPerMin" />
+
+        <EditText
+            android:id="@+id/rateLimitUpPerMin"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/text_size"
+            android:layout_marginTop="@dimen/text_size_over_2"
+            android:inputType="numberDecimal"
+            android:maxLines="1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/rateLimitUpPerMinDesc" />
+
+        <TextView
+            style="@style/Label"
+            android:id="@+id/lblRateLimitDownPerMin"
+            android:text="@string/rateLimitDownPerMin"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/rateLimitUpPerMin" />
+
+        <TextView
+            android:id="@+id/rateLimitDownPerMinDesc"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/text_size"
+            android:layout_marginVertical="@dimen/text_size_over_2"
+            android:text="@string/rateLimitDownPerMinDesc"
+            android:textStyle="italic"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/lblRateLimitDownPerMin" />
+
+        <EditText
+            android:id="@+id/rateLimitDownPerMin"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/text_size"
+            android:layout_marginTop="@dimen/text_size_over_2"
+            android:inputType="numberDecimal"
+            android:maxLines="1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/rateLimitDownPerMinDesc" />
+
+        <TextView
+            style="@style/Label"
+            android:id="@+id/lblMonotonicThreshold"
+            android:text="@string/monotonicThresholdmA"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/rateLimitDownPerMin" />
+
+        <TextView
+            android:id="@+id/monotonicThresholdDesc"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/text_size"
+            android:layout_marginVertical="@dimen/text_size_over_2"
+            android:text="@string/monotonicThresholdmADesc"
+            android:textStyle="italic"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/lblMonotonicThreshold" />
+
+        <EditText
+            android:id="@+id/monotonicThresholdmA"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/text_size"
+            android:layout_marginTop="@dimen/text_size_over_2"
+            android:inputType="numberDecimal"
+            android:maxLines="1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/monotonicThresholdDesc" />
+
+        <TextView
             android:id="@+id/lblVoltageCurve"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -226,7 +463,7 @@
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/refreshInterval" />
+            app:layout_constraintTop_toBottomOf="@id/monotonicThresholdmA" />
 
         <TextView
             android:id="@+id/voltageCurveDesc"
