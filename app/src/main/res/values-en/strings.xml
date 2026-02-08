@@ -22,6 +22,21 @@
     <string name="refreshInterval">Refresh interval (ms)</string>
     <string name="refreshIntervalDesc">How often battery data refreshes. Allowed range: 100-100000 ms.</string>
     <string name="yes">yes</string>
+    <string name="socSettingsTitle">SOC Estimation</string>
+    <string name="capacityMah">Battery capacity (mAh)</string>
+    <string name="capacityMahDesc">Used for coulomb counting to estimate % change over time. Example: 5000 mAh.</string>
+    <string name="restThresholdmA">Rest current threshold (mA)</string>
+    <string name="restThresholdmADesc">Below this current, the battery is treated as resting. Example: 100 mA (0.1 A).</string>
+    <string name="restStableSeconds">Rest stability time (seconds)</string>
+    <string name="restStableSecondsDesc">Time the current must stay below the rest threshold before using OCV corrections. Example: 10 seconds.</string>
+    <string name="pullToOcvK">OCV pull factor</string>
+    <string name="pullToOcvKDesc">Blends SOC toward the voltage-based estimate while resting. Example: 0.02 moves 2% of the gap per update.</string>
+    <string name="rateLimitUpPerMin">Max SOC increase (%/min)</string>
+    <string name="rateLimitUpPerMinDesc">Limits how fast SOC can rise per minute. Example: 1.0 %/min.</string>
+    <string name="rateLimitDownPerMin">Max SOC decrease (%/min)</string>
+    <string name="rateLimitDownPerMinDesc">Limits how fast SOC can fall per minute. Example: 1.0 %/min.</string>
+    <string name="monotonicThresholdmA">Monotonic threshold (mA)</string>
+    <string name="monotonicThresholdmADesc">Above this current, SOC only moves in the charge/discharge direction. Example: 50 mA.</string>
 
     <!-- settings -->
     <string name="currentScalar">Power Scalar Workaround</string>

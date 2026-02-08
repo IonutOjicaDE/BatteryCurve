@@ -21,6 +21,21 @@ import android.widget.Toast
 const val settingsName = "settings"
 const val settingsUpdateInd = "$namespace.settings-update-ind"
 const val refreshIntervalKey = "refreshIntervalMs"
+const val capacityMahKey = "capacityMah"
+const val restThresholdmAKey = "restThresholdmA"
+const val restStableSecondsKey = "restStableSeconds"
+const val pullToOcvKKey = "pullToOcvK"
+const val rateLimitUpPerMinKey = "rateLimitUpPerMin"
+const val rateLimitDownPerMinKey = "rateLimitDownPerMin"
+const val monotonicThresholdmAKey = "monotonicThresholdmA"
+
+const val defaultCapacityMah = 5000.0
+const val defaultRestThresholdmA = 100.0
+const val defaultRestStableSeconds = 10.0
+const val defaultPullToOcvK = 0.02
+const val defaultRateLimitUpPerMin = 1.0
+const val defaultRateLimitDownPerMin = 1.0
+const val defaultMonotonicThresholdmA = 50.0
 
 class SettingsActivity : Activity() {
     private val batteryReceiver = BatteryDataReceiver()
@@ -30,6 +45,13 @@ class SettingsActivity : Activity() {
     private lateinit var indicatorUnits: RadioLayout
     private lateinit var indicatorDigits: EditText
     private lateinit var refreshInterval: EditText
+    private lateinit var capacityMah: EditText
+    private lateinit var restThresholdmA: EditText
+    private lateinit var restStableSeconds: EditText
+    private lateinit var pullToOcvK: EditText
+    private lateinit var rateLimitUpPerMin: EditText
+    private lateinit var rateLimitDownPerMin: EditText
+    private lateinit var monotonicThresholdmA: EditText
     @SuppressLint("UseSwitchCompatOrMaterialCode")
     private lateinit var invertCurrent: Switch
     private lateinit var power: TextView
@@ -39,6 +61,13 @@ class SettingsActivity : Activity() {
     private var loadingVoltageCurve = false
     private var indicatorDigitsValue = defaultIndicatorDigits
     private var refreshIntervalValue = defaultRefreshIntervalMs
+    private var capacityMahValue = defaultCapacityMah
+    private var restThresholdmAValue = defaultRestThresholdmA
+    private var restStableSecondsValue = defaultRestStableSeconds
+    private var pullToOcvKValue = defaultPullToOcvK
+    private var rateLimitUpPerMinValue = defaultRateLimitUpPerMin
+    private var rateLimitDownPerMinValue = defaultRateLimitDownPerMin
+    private var monotonicThresholdmAValue = defaultMonotonicThresholdmA
 
     private fun debug(msg: String) {
         Log.d(this::class.java.name, msg)
@@ -85,6 +114,29 @@ class SettingsActivity : Activity() {
         refreshIntervalValue = settings.getLong(refreshIntervalKey, defaultRefreshIntervalMs)
             .coerceIn(minRefreshIntervalMs, maxRefreshIntervalMs)
         refreshInterval.setText(refreshIntervalValue.toString())
+        capacityMahValue = settings.getFloat(capacityMahKey, defaultCapacityMah.toFloat()).toDouble()
+        capacityMah.setText(formatNumber(capacityMahValue))
+        restThresholdmAValue = settings.getFloat(restThresholdmAKey, defaultRestThresholdmA.toFloat()).toDouble()
+        restThresholdmA.setText(formatNumber(restThresholdmAValue))
+        restStableSecondsValue = settings.getFloat(restStableSecondsKey, defaultRestStableSeconds.toFloat()).toDouble()
+        restStableSeconds.setText(formatNumber(restStableSecondsValue))
+        pullToOcvKValue = settings.getFloat(pullToOcvKKey, defaultPullToOcvK.toFloat()).toDouble()
+        pullToOcvK.setText(formatNumber(pullToOcvKValue))
+        rateLimitUpPerMinValue = settings.getFloat(
+            rateLimitUpPerMinKey,
+            defaultRateLimitUpPerMin.toFloat()
+        ).toDouble()
+        rateLimitUpPerMin.setText(formatNumber(rateLimitUpPerMinValue))
+        rateLimitDownPerMinValue = settings.getFloat(
+            rateLimitDownPerMinKey,
+            defaultRateLimitDownPerMin.toFloat()
+        ).toDouble()
+        rateLimitDownPerMin.setText(formatNumber(rateLimitDownPerMinValue))
+        monotonicThresholdmAValue = settings.getFloat(
+            monotonicThresholdmAKey,
+            defaultMonotonicThresholdmA.toFloat()
+        ).toDouble()
+        monotonicThresholdmA.setText(formatNumber(monotonicThresholdmAValue))
         invertCurrent.isChecked = settings.getBoolean("invertCurrent", false)
         loadingVoltageCurve = true
         setVoltageCurveFields(VoltageCurve.loadFromPrefs(settings))
@@ -138,6 +190,23 @@ class SettingsActivity : Activity() {
             .putLong(refreshIntervalKey, value)
             .commit()
         sendBroadcast(Intent().setPackage(packageName).setAction(settingsUpdateInd))
+    }
+
+    @SuppressLint("ApplySharedPref")
+    private fun saveDoublePref(key: String, value: Double) {
+        getSharedPreferences(settingsName, MODE_PRIVATE)
+            .edit()
+            .putFloat(key, value.toFloat())
+            .commit()
+        sendBroadcast(Intent().setPackage(packageName).setAction(settingsUpdateInd))
+    }
+
+    private fun formatNumber(value: Double): String {
+        return if (value % 1.0 == 0.0) {
+            value.toLong().toString()
+        } else {
+            value.toString()
+        }
     }
 
     private data class VoltageCurveField(val percent: EditText, val volts: EditText)
@@ -234,6 +303,13 @@ class SettingsActivity : Activity() {
         indicatorUnits = findViewById(R.id.indicatorUnits)
         indicatorDigits = findViewById(R.id.indicatorDigits)
         refreshInterval = findViewById(R.id.refreshInterval)
+        capacityMah = findViewById(R.id.capacityMah)
+        restThresholdmA = findViewById(R.id.restThresholdmA)
+        restStableSeconds = findViewById(R.id.restStableSeconds)
+        pullToOcvK = findViewById(R.id.pullToOcvK)
+        rateLimitUpPerMin = findViewById(R.id.rateLimitUpPerMin)
+        rateLimitDownPerMin = findViewById(R.id.rateLimitDownPerMin)
+        monotonicThresholdmA = findViewById(R.id.monotonicThresholdmA)
         invertCurrent = findViewById(R.id.invertCurrent)
         power = findViewById(R.id.power)
         importVoltageCurve = findViewById(R.id.importVoltageCurve)
@@ -282,6 +358,104 @@ class SettingsActivity : Activity() {
                     refreshIntervalValue = valid
                     refreshInterval.error = null
                     saveRefreshInterval(valid)
+                }
+            }
+        }
+        capacityMah.setOnFocusChangeListener { _, hasFocus ->
+            if (!hasFocus) {
+                val parsed = capacityMah.text.toString().trim().toDoubleOrNull()
+                val valid = parsed?.takeIf { it > 0.0 }
+                if (valid == null) {
+                    capacityMah.setText(formatNumber(capacityMahValue))
+                    capacityMah.error = getString(R.string.invalidNumber)
+                } else {
+                    capacityMahValue = valid
+                    capacityMah.error = null
+                    saveDoublePref(capacityMahKey, valid)
+                }
+            }
+        }
+        restThresholdmA.setOnFocusChangeListener { _, hasFocus ->
+            if (!hasFocus) {
+                val parsed = restThresholdmA.text.toString().trim().toDoubleOrNull()
+                val valid = parsed?.takeIf { it >= 0.0 }
+                if (valid == null) {
+                    restThresholdmA.setText(formatNumber(restThresholdmAValue))
+                    restThresholdmA.error = getString(R.string.invalidNumber)
+                } else {
+                    restThresholdmAValue = valid
+                    restThresholdmA.error = null
+                    saveDoublePref(restThresholdmAKey, valid)
+                }
+            }
+        }
+        restStableSeconds.setOnFocusChangeListener { _, hasFocus ->
+            if (!hasFocus) {
+                val parsed = restStableSeconds.text.toString().trim().toDoubleOrNull()
+                val valid = parsed?.takeIf { it >= 0.0 }
+                if (valid == null) {
+                    restStableSeconds.setText(formatNumber(restStableSecondsValue))
+                    restStableSeconds.error = getString(R.string.invalidNumber)
+                } else {
+                    restStableSecondsValue = valid
+                    restStableSeconds.error = null
+                    saveDoublePref(restStableSecondsKey, valid)
+                }
+            }
+        }
+        pullToOcvK.setOnFocusChangeListener { _, hasFocus ->
+            if (!hasFocus) {
+                val parsed = pullToOcvK.text.toString().trim().toDoubleOrNull()
+                val valid = parsed?.takeIf { it in 0.0..1.0 }
+                if (valid == null) {
+                    pullToOcvK.setText(formatNumber(pullToOcvKValue))
+                    pullToOcvK.error = getString(R.string.invalidNumber)
+                } else {
+                    pullToOcvKValue = valid
+                    pullToOcvK.error = null
+                    saveDoublePref(pullToOcvKKey, valid)
+                }
+            }
+        }
+        rateLimitUpPerMin.setOnFocusChangeListener { _, hasFocus ->
+            if (!hasFocus) {
+                val parsed = rateLimitUpPerMin.text.toString().trim().toDoubleOrNull()
+                val valid = parsed?.takeIf { it >= 0.0 }
+                if (valid == null) {
+                    rateLimitUpPerMin.setText(formatNumber(rateLimitUpPerMinValue))
+                    rateLimitUpPerMin.error = getString(R.string.invalidNumber)
+                } else {
+                    rateLimitUpPerMinValue = valid
+                    rateLimitUpPerMin.error = null
+                    saveDoublePref(rateLimitUpPerMinKey, valid)
+                }
+            }
+        }
+        rateLimitDownPerMin.setOnFocusChangeListener { _, hasFocus ->
+            if (!hasFocus) {
+                val parsed = rateLimitDownPerMin.text.toString().trim().toDoubleOrNull()
+                val valid = parsed?.takeIf { it >= 0.0 }
+                if (valid == null) {
+                    rateLimitDownPerMin.setText(formatNumber(rateLimitDownPerMinValue))
+                    rateLimitDownPerMin.error = getString(R.string.invalidNumber)
+                } else {
+                    rateLimitDownPerMinValue = valid
+                    rateLimitDownPerMin.error = null
+                    saveDoublePref(rateLimitDownPerMinKey, valid)
+                }
+            }
+        }
+        monotonicThresholdmA.setOnFocusChangeListener { _, hasFocus ->
+            if (!hasFocus) {
+                val parsed = monotonicThresholdmA.text.toString().trim().toDoubleOrNull()
+                val valid = parsed?.takeIf { it >= 0.0 }
+                if (valid == null) {
+                    monotonicThresholdmA.setText(formatNumber(monotonicThresholdmAValue))
+                    monotonicThresholdmA.error = getString(R.string.invalidNumber)
+                } else {
+                    monotonicThresholdmAValue = valid
+                    monotonicThresholdmA.error = null
+                    saveDoublePref(monotonicThresholdmAKey, valid)
                 }
             }
         }
